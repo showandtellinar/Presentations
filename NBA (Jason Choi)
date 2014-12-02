@@ -1,0 +1,253 @@
+library(sqldf)
+library(ggplot2)
+#Read in the data and change name
+Season10_11 <- read.csv('2010-2011.csv',header=T)
+names(Season10_11) <- c('Rk','Player','Pos','Age','Tm','G','GS','MP','FG','FGA','FGPer','ThreeP','ThreePA','FGPerThreeP','TwoP',
+                      'TwoPA','FGPerTwoP','eFGPer','FT','FTA','FTPer','ORB','DRB','TRB','AST','STL','BLK','TOV','PF','PTS')
+Season11_12 <- read.csv('2011-2012.csv',header=T)
+names(Season11_12) <- c('Rk','Player','Pos','Age','Tm','G','GS','MP','FG','FGA','FGPer','ThreeP','ThreePA','FGPerThreeP','TwoP',
+                        'TwoPA','FGPerTwoP','eFGPer','FT','FTA','FTPer','ORB','DRB','TRB','AST','STL','BLK','TOV','PF','PTS')
+Season12_13 <- read.csv('2012-2013.csv',header=T)
+names(Season12_13) <- c('Rk','Player','Pos','Age','Tm','G','GS','MP','FG','FGA','FGPer','ThreeP','ThreePA','FGPerThreeP','TwoP',
+                        'TwoPA','FGPerTwoP','eFGPer','FT','FTA','FTPer','ORB','DRB','TRB','AST','STL','BLK','TOV','PF','PTS')
+Season13_14 <- read.csv('2013-2014.csv',header=T)
+names(Season13_14) <- c('Rk','Player','Pos','Age','Tm','G','GS','MP','FG','FGA','FGPer','ThreeP','ThreePA','FGPerThreeP','TwoP',
+                        'TwoPA','FGPerTwoP','eFGPer','FT','FTA','FTPer','ORB','DRB','TRB','AST','STL','BLK','TOV','PF','PTS')
+Season14_15 <- read.csv('2014-2015.csv',header=T)
+names(Season14_15) <- c('Rk','Player','Pos','Age','Tm','G','GS','MP','FG','FGA','FGPer','ThreeP','ThreePA','FGPerThreeP','TwoP',
+                        'TwoPA','FGPerTwoP','eFGPer','FT','FTA','FTPer','ORB','DRB','TRB','AST','STL','BLK','TOV','PF','PTS')
+
+#Combine same players who transfered during the season(combine using 'Rk' [same player has same Rk])
+#Take the mean of percentage variables (does not make sense to sum them together)
+Season10_11a <- aggregate(cbind(G,GS,MP,FG,FGA,FGPer,ThreeP,ThreePA,FGPerThreeP,TwoP,TwoPA,FGPerTwoP,eFGPer,FT,FTA,FTPer,ORB,DRB,TRB,AST,STL,BLK,TOV,PF,PTS) ~ Rk+Player+Pos+Age, data = Season10_11 , FUN = sum )
+Season10_11a <- Season10_11a[!(duplicated(Season10_11a$Player) | duplicated(Season10_11a$Player, fromLast = TRUE)), ]
+Season10_11a$FGPer <- Season10_11a$FGPer/2
+Season10_11a$FGPerThreeP <- Season10_11a$FGPerThreeP/2
+Season10_11a$FGPerTwoP <- Season10_11a$FGPerTwoP/2
+Season10_11a$eFGPer <- Season10_11a$eFGPer/2
+Season10_11a$FTPer <- Season10_11a$FTPer/2
+#Some players changed positions during the season. 
+#Therefore, eliminate those who changed position for the purpose of this 
+#analysis. Position is an important variable and the aggregate function will not work for those players
+#who change positions during the season. 
+duplicated(Season10_11$Player)
+#check for duplication
+
+  
+Season11_12a <- aggregate(cbind(G,GS,MP,FG,FGA,FGPer,ThreeP,ThreePA,FGPerThreeP,TwoP,TwoPA,FGPerTwoP,eFGPer,FT,FTA,FTPer,ORB,DRB,TRB,AST,STL,BLK,TOV,PF,PTS) ~ Rk+Player+Pos+Age, data = Season11_12 , FUN = sum )
+Season11_12a <- Season11_12a[!(duplicated(Season11_12a$Player) | duplicated(Season11_12a$Player, fromLast = TRUE)), ]
+Season11_12a$FGPer <- Season11_12a$FGPer/2
+Season11_12a$FGPerThreeP <- Season11_12a$FGPerThreeP/2
+Season11_12a$FGPerTwoP <- Season11_12a$FGPerTwoP/2
+Season11_12a$eFGPer <- Season11_12a$eFGPer/2
+Season11_12a$FTPer <- Season11_12a$FTPer/2
+duplicated(Season11_12a$Player)
+
+Season12_13a <- aggregate(cbind(G,GS,MP,FG,FGA,FGPer,ThreeP,ThreePA,FGPerThreeP,TwoP,TwoPA,FGPerTwoP,eFGPer,FT,FTA,FTPer,ORB,DRB,TRB,AST,STL,BLK,TOV,PF,PTS) ~ Rk+Player+Pos+Age, data = Season12_13 , FUN = sum )
+Season12_13a <- Season12_13a[!(duplicated(Season12_13a$Player) | duplicated(Season12_13a$Player, fromLast = TRUE)), ]
+Season12_13a$FGPer <- Season12_13a$FGPer/2
+Season12_13a$FGPerThreeP <- Season12_13a$FGPerThreeP/2
+Season12_13a$FGPerTwoP <- Season12_13a$FGPerTwoP/2
+Season12_13a$eFGPer <- Season12_13a$eFGPer/2
+Season12_13a$FTPer <- Season12_13a$FTPer/2
+duplicated(Season12_13a$Player)
+
+Season13_14a <- aggregate(cbind(G,GS,MP,FG,FGA,FGPer,ThreeP,ThreePA,FGPerThreeP,TwoP,TwoPA,FGPerTwoP,eFGPer,FT,FTA,FTPer,ORB,DRB,TRB,AST,STL,BLK,TOV,PF,PTS) ~ Rk+Player+Pos+Age, data = Season13_14 , FUN = sum )
+Season13_14a <- Season13_14a[!(duplicated(Season13_14a$Player) | duplicated(Season13_14a$Player, fromLast = TRUE)), ]
+Season13_14a$FGPer <- Season13_14a$FGPer/2
+Season13_14a$FGPerThreeP <- Season13_14a$FGPerThreeP/2
+Season13_14a$FGPerTwoP <- Season13_14a$FGPerTwoP/2
+Season13_14a$eFGPer <- Season13_14a$eFGPer/2
+Season13_14a$FTPer <- Season13_14a$FTPer/2
+duplicated(Season13_14a$Player)
+
+Season14_15a <- aggregate(cbind(G,GS,MP,FG,FGA,FGPer,ThreeP,ThreePA,FGPerThreeP,TwoP,TwoPA,FGPerTwoP,eFGPer,FT,FTA,FTPer,ORB,DRB,TRB,AST,STL,BLK,TOV,PF,PTS) ~ Rk+Player+Pos+Age, data = Season14_15 , FUN = sum )
+Season14_15a <- Season14_15a[!(duplicated(Season14_15a$Player) | duplicated(Season14_15a$Player, fromLast = TRUE)), ]
+Season14_15a$FGPer <- Season14_15a$FGPer/2
+Season14_15a$FGPerThreeP <- Season14_15a$FGPerThreeP/2
+Season14_15a$FGPerTwoP <- Season14_15a$FGPerTwoP/2
+Season14_15a$eFGPer <- Season14_15a$eFGPer/2
+Season14_15a$FTPer <- Season14_15a$FTPer/2
+duplicated(Season14_15a$Player)
+
+#Combine the data
+#Combine 2010-2011 and 2011-2012 Season (matching players)
+AllSeason <- sqldf('SELECT * FROM Season10_11a a
+                   LEFT JOIN Season11_12a b 
+                   ON a.Player = b.Player')
+AllSeason <- AllSeason[complete.cases(AllSeason),]
+
+AllSeasona <- AllSeason[,1:29]
+AllSeasonb <- AllSeason[,30:58]
+AllSeasonc <- data.frame(rbind(AllSeasona,AllSeasonb))
+
+AllSeasonc <- aggregate(cbind(G,GS,MP,FG,FGA,FGPer,ThreeP,ThreePA,FGPerThreeP,TwoP,TwoPA,FGPerTwoP,eFGPer,FT,FTA,FTPer,ORB,DRB,TRB,AST,STL,BLK,TOV,PF,PTS) ~ Player, data = AllSeasonc , FUN = sum )
+AllSeasonc$FGPer <- AllSeasonc$FGPer/2
+AllSeasonc$FGPerThreeP <- AllSeasonc$FGPerThreeP/2
+AllSeasonc$FGPerTwoP <- AllSeasonc$FGPerTwoP/2
+AllSeasonc$eFGPer <- AllSeasonc$eFGPer/2
+AllSeasonc$FTPer <- AllSeasonc$FTPer/2
+AllSeasonc <- AllSeasonc[order(AllSeasonc$Player),] 
+AllSeasonc <- AllSeasonc[!(duplicated(AllSeasonc$Player) | duplicated(AllSeasonc$Player, fromLast = TRUE)), ]
+
+#Combine previous combination with 2012-13 Season (matching players)
+AllSeasond <- sqldf('SELECT * FROM AllSeasonc a
+                   LEFT JOIN Season12_13a b 
+                   ON a.Player = b.Player')
+AllSeasond <- AllSeasond[complete.cases(AllSeasond),]
+
+AllSeasone <- AllSeasond[,1:26]
+AllSeasone$Pos <- NULL
+AllSeasonf <- AllSeasond[,27:55]
+AllSeasonf$Age <- NULL
+AllSeasonf$Pos <- NULL
+AllSeasonf$Rk <- NULL
+AllSeasong <- data.frame(rbind(AllSeasone,AllSeasonf))
+
+AllSeasong <- aggregate(cbind(G,GS,MP,FG,FGA,FGPer,ThreeP,ThreePA,FGPerThreeP,TwoP,TwoPA,FGPerTwoP,eFGPer,FT,FTA,FTPer,ORB,DRB,TRB,AST,STL,BLK,TOV,PF,PTS) ~ Player, data = AllSeasong , FUN = sum )
+AllSeasong$FGPer <- AllSeasong$FGPer/2
+AllSeasong$FGPerThreeP <- AllSeasong$FGPerThreeP/2
+AllSeasong$FGPerTwoP <- AllSeasong$FGPerTwoP/2
+AllSeasong$eFGPer <- AllSeasong$eFGPer/2
+AllSeasong$FTPer <- AllSeasong$FTPer/2
+AllSeasong <- AllSeasong[order(AllSeasong$Player),] 
+AllSeasong <- AllSeasong[!(duplicated(AllSeasong$Player) | duplicated(AllSeasong$Player, fromLast = TRUE)), ]
+
+#Combine previous combination with 2013-14 Season (matching players)
+AllSeasonh <- sqldf('SELECT * FROM AllSeasong a
+                   LEFT JOIN Season13_14a b 
+                   ON a.Player = b.Player')
+AllSeasonh <- AllSeasonh[complete.cases(AllSeasonh),]
+
+AllSeasoni <- AllSeasonh[,1:26]
+AllSeasoni$Pos <- NULL
+AllSeasonj <- AllSeasonh[,27:55]
+AllSeasonj$Age <- NULL
+AllSeasonj$Pos <- NULL
+AllSeasonj$Rk <- NULL
+AllSeasonk <- data.frame(rbind(AllSeasoni,AllSeasonj))
+
+AllSeasonk <- AllSeasonk[order(AllSeasonk$Player),] 
+
+
+AllSeasonk <- aggregate(cbind(G,GS,MP,FG,FGA,FGPer,ThreeP,ThreePA,FGPerThreeP,TwoP,TwoPA,FGPerTwoP,eFGPer,FT,FTA,FTPer,ORB,DRB,TRB,AST,STL,BLK,TOV,PF,PTS) ~ Player, data = AllSeasonk , FUN = sum )
+AllSeasonk$FGPer <- AllSeasonk$FGPer/2
+AllSeasonk$FGPerThreeP <- AllSeasonk$FGPerThreeP/2
+AllSeasonk$FGPerTwoP <- AllSeasonk$FGPerTwoP/2
+AllSeasonk$eFGPer <- AllSeasonk$eFGPer/2
+AllSeasonk$FTPer <- AllSeasonk$FTPer/2
+AllSeasonk <- AllSeasonk[!(duplicated(AllSeasonk$Player) | duplicated(AllSeasonk$Player, fromLast = TRUE)), ]
+
+#Combine previous combination with 2014-15 Season (matching players)
+AllSeasonl <- sqldf('SELECT * FROM AllSeasonk a
+                   LEFT JOIN Season14_15a b 
+                   ON a.Player = b.Player')
+AllSeasonl <- AllSeasonl[complete.cases(AllSeasonl),]
+
+AllSeasonm <- AllSeasonl[,1:26]
+AllSeasonm$Pos <- NULL
+AllSeasonn <- AllSeasonl[,27:55]
+AllSeasonn$Age <- NULL
+AllSeasonn$Pos <- NULL
+AllSeasonn$Rk <- NULL
+AllSeasono <- data.frame(rbind(AllSeasonm,AllSeasonn))
+
+
+AllSeasono <- AllSeasono[order(AllSeasono$Player),] 
+
+
+AllSeasonp <- aggregate(cbind(G,GS,MP,FG,FGA,FGPer,ThreeP,ThreePA,FGPerThreeP,TwoP,TwoPA,FGPerTwoP,eFGPer,FT,FTA,FTPer,ORB,DRB,TRB,AST,STL,BLK,TOV,PF,PTS) ~ Player, data = AllSeasono , FUN = sum )
+AllSeasonp$FGPer <- AllSeasonp$FGPer/2
+AllSeasonp$FGPerThreeP <- AllSeasonp$FGPerThreeP/2
+AllSeasonp$FGPerTwoP <- AllSeasonp$FGPerTwoP/2
+AllSeasonp$eFGPer <- AllSeasonp$eFGPer/2
+AllSeasonp$FTPer <- AllSeasonp$FTPer/2
+AllSeasonp <- AllSeasonp[!(duplicated(AllSeasonp$Player) | duplicated(AllSeasonp$Player, fromLast = TRUE)), ]
+#END OF DATA CLEANING
+
+#Plotting and analysis
+#2010-2011 Season
+ggplot(Season10_11a, aes(x=MP, y=PTS, label=Player)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(Season10_11a, aes(x=MP, y=PTS, label=Player)) + geom_point() + geom_smooth()
+
+ggplot(Season10_11a, aes(x=MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(Season10_11a, aes(x=MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth()
+#minutes played vs pts scored
+
+#2011-2012 Season
+ggplot(Season11_12a, aes(x=MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(Season11_12a, aes(x=MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth()
+#minutes played vs pts scored
+
+#2012-2013 Season
+ggplot(Season12_13a, aes(x=MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(Season12_13a, aes(x=MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth()
+#minutes played vs pts scored
+
+#2013-2014 Season
+ggplot(Season13_14a, aes(x=MP, y=PTS, label=Player)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(Season13_14a, aes(x=MP, y=PTS, label=Player)) + geom_point() + geom_smooth()
+#minutes played vs pts scored
+
+#2014-2015 Season
+ggplot(Season14_15a, aes(x=MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(Season14_15a, aes(x=MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth()
+#minutes played vs pts scored
+
+#All Season
+ggplot(AllSeasonp, aes(x=MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(AllSeasonp, aes(x=MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth()
+
+ggplot(AllSeasonp, aes(x=MP, y=PTS, label=Player)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(AllSeasonp, aes(x=MP, y=PTS, label=Player)) + geom_point() + geom_smooth()
+#minutes played vs pts scored
+
+#2010-2011 Season
+ggplot(Season10_11a, aes(x=AST/MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(Season10_11a, aes(x=AST/MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth()
+#Points vs Assists (by per minute)
+
+#2011-2012 Season
+ggplot(Season11_12a, aes(x=AST/MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(Season11_12a, aes(x=AST/MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth()
+#Points vs Assists (by per minute)
+
+#2012-2013 Season
+ggplot(Season12_13a, aes(x=AST/MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(Season12_13a, aes(x=AST/MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth()
+#Points vs Assists (by per minute)
+
+#2013-2014 Season
+ggplot(Season13_14a, aes(x=AST/MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(Season13_14a, aes(x=AST/MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth()
+#Points vs Assists (by per minute)
+
+#All Season
+ggplot(AllSeasonp, aes(x=AST/MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(AllSeasonp, aes(x=AST/MP, y=PTS/MP, label=Player)) + geom_point() + geom_smooth()
+#Points vs Assists (by per minute) 
+
+#Shooting efficiency vs. shooting volume
+ggplot(AllSeasonp, aes(x=TwoP/TwoPA, y=ThreeP/ThreePA)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(AllSeasonp, aes(x=TwoP/TwoPA, y=ThreeP/ThreePA)) + geom_point() + geom_smooth()
+
+#Scored vs attempts 
+ggplot(AllSeasonp, aes(x=FGA, y=FG/FGA)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(AllSeasonp, aes(x=FGA, y=FG/FGA)) + geom_point() + geom_smooth()
+
+#Average of all players (omit Kobe Bryant and Lebron James)
+allexcepttwo <- AllSeasonp[c(1:66,68:72,74:nrow(AllSeasonp)),]
+mean(allexcepttwo$TwoP/allexcepttwo$TwoPA)
+mean(allexcepttwo$ThreeP/allexcepttwo$ThreePA)
+mean(allexcepttwo$FT/allexcepttwo$FTA)
+
+#Number of freethrows (important! shows how well the player drives in and gets fouled)
+ggplot(AllSeasonp, aes(x=FT/MP,y=FT)) + geom_point() + geom_smooth() + geom_text(aes(label=Player))
+ggplot(AllSeasonp, aes(x=FT/MP,y=FT)) + geom_point() + geom_smooth()
+
+#Kobe and LeBron statistics
+kobe <- subset(AllSeasonp,Player == 'Kobe Bryant')
+lebron <- subset(AllSeasonp, Player == 'LeBron James')
+kobelebron <- rbind(subset,subset1)
+
+
